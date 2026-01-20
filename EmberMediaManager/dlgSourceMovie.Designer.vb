@@ -48,34 +48,35 @@ Partial Class dlgSourceMovie
         Me.tmrPath = New System.Windows.Forms.Timer(Me.components)
         Me.pnlMain = New System.Windows.Forms.Panel()
         Me.tblMain = New System.Windows.Forms.TableLayoutPanel()
+        Me.pbValidSourcePath = New System.Windows.Forms.PictureBox()
         Me.pnlBottom = New System.Windows.Forms.Panel()
         Me.tblBottom = New System.Windows.Forms.TableLayoutPanel()
-        Me.pbValidSourcePath = New System.Windows.Forms.PictureBox()
         Me.gbSourceOptions.SuspendLayout()
         Me.tblSourceOptions.SuspendLayout()
         CType(Me.pbValidSourceName, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlMain.SuspendLayout()
         Me.tblMain.SuspendLayout()
+        CType(Me.pbValidSourcePath, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlBottom.SuspendLayout()
         Me.tblBottom.SuspendLayout()
-        CType(Me.pbValidSourcePath, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'OK_Button
         '
         Me.OK_Button.Enabled = False
         Me.OK_Button.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.OK_Button.Location = New System.Drawing.Point(308, 3)
+        Me.OK_Button.Location = New System.Drawing.Point(550, 3)
         Me.OK_Button.Name = "OK_Button"
         Me.OK_Button.Size = New System.Drawing.Size(67, 23)
         Me.OK_Button.TabIndex = 9
         Me.OK_Button.Text = "OK"
+        AddHandler Me.OK_Button.Click, AddressOf Me.OK_Button_Click_1
         '
         'Cancel_Button
         '
         Me.Cancel_Button.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Cancel_Button.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.Cancel_Button.Location = New System.Drawing.Point(381, 3)
+        Me.Cancel_Button.Location = New System.Drawing.Point(623, 3)
         Me.Cancel_Button.Name = "Cancel_Button"
         Me.Cancel_Button.Size = New System.Drawing.Size(67, 23)
         Me.Cancel_Button.TabIndex = 10
@@ -316,7 +317,7 @@ Partial Class dlgSourceMovie
         Me.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlMain.Location = New System.Drawing.Point(0, 0)
         Me.pnlMain.Name = "pnlMain"
-        Me.pnlMain.Size = New System.Drawing.Size(451, 309)
+        Me.pnlMain.Size = New System.Drawing.Size(693, 367)
         Me.pnlMain.TabIndex = 2
         '
         'tblMain
@@ -347,17 +348,27 @@ Partial Class dlgSourceMovie
         Me.tblMain.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.tblMain.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me.tblMain.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblMain.Size = New System.Drawing.Size(451, 309)
+        Me.tblMain.Size = New System.Drawing.Size(693, 367)
         Me.tblMain.TabIndex = 15
+        '
+        'pbValidSourcePath
+        '
+        Me.pbValidSourcePath.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.pbValidSourcePath.Image = Global.Ember_Media_Manager.My.Resources.Resources.invalid
+        Me.pbValidSourcePath.Location = New System.Drawing.Point(388, 77)
+        Me.pbValidSourcePath.Name = "pbValidSourcePath"
+        Me.pbValidSourcePath.Size = New System.Drawing.Size(16, 16)
+        Me.pbValidSourcePath.TabIndex = 7
+        Me.pbValidSourcePath.TabStop = False
         '
         'pnlBottom
         '
         Me.pnlBottom.AutoSize = True
         Me.pnlBottom.Controls.Add(Me.tblBottom)
         Me.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.pnlBottom.Location = New System.Drawing.Point(0, 309)
+        Me.pnlBottom.Location = New System.Drawing.Point(0, 367)
         Me.pnlBottom.Name = "pnlBottom"
-        Me.pnlBottom.Size = New System.Drawing.Size(451, 29)
+        Me.pnlBottom.Size = New System.Drawing.Size(693, 29)
         Me.pnlBottom.TabIndex = 4
         '
         'tblBottom
@@ -374,18 +385,8 @@ Partial Class dlgSourceMovie
         Me.tblBottom.Name = "tblBottom"
         Me.tblBottom.RowCount = 1
         Me.tblBottom.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblBottom.Size = New System.Drawing.Size(451, 29)
+        Me.tblBottom.Size = New System.Drawing.Size(693, 29)
         Me.tblBottom.TabIndex = 0
-        '
-        'pbValidSourcePath
-        '
-        Me.pbValidSourcePath.Anchor = System.Windows.Forms.AnchorStyles.Left
-        Me.pbValidSourcePath.Image = Global.Ember_Media_Manager.My.Resources.Resources.invalid
-        Me.pbValidSourcePath.Location = New System.Drawing.Point(388, 77)
-        Me.pbValidSourcePath.Name = "pbValidSourcePath"
-        Me.pbValidSourcePath.Size = New System.Drawing.Size(16, 16)
-        Me.pbValidSourcePath.TabIndex = 7
-        Me.pbValidSourcePath.TabStop = False
         '
         'dlgSourceMovie
         '
@@ -395,7 +396,7 @@ Partial Class dlgSourceMovie
         Me.AutoSize = True
         Me.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
         Me.CancelButton = Me.Cancel_Button
-        Me.ClientSize = New System.Drawing.Size(451, 338)
+        Me.ClientSize = New System.Drawing.Size(693, 396)
         Me.Controls.Add(Me.pnlMain)
         Me.Controls.Add(Me.pnlBottom)
         Me.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -415,10 +416,10 @@ Partial Class dlgSourceMovie
         Me.pnlMain.PerformLayout()
         Me.tblMain.ResumeLayout(False)
         Me.tblMain.PerformLayout()
+        CType(Me.pbValidSourcePath, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlBottom.ResumeLayout(False)
         Me.pnlBottom.PerformLayout()
         Me.tblBottom.ResumeLayout(False)
-        CType(Me.pbValidSourcePath, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

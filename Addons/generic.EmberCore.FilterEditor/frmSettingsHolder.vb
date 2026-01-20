@@ -1,4 +1,4 @@
-﻿' ################################################################################
+' ################################################################################
 ' #                             EMBER MEDIA MANAGER                              #
 ' ################################################################################
 ' ################################################################################
@@ -89,30 +89,38 @@ Public Class frmSettingsHolder
 
     Private Sub cbCustomMediaList_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs) Handles cbCustomMediaList.SelectedIndexChanged
         If Not cbCustomMediaList.SelectedIndex = -1 Then
-            cbCustomMediaListType.SelectedIndex = -1
-            btnCustomMediaListRemove.Enabled = True
-            txtCustomMediaListName.Text = String.Empty
-            txtCustomMediaListQuery.Text = String.Empty
-            Dim SQL As Database.SQLViewProperty = Master.DB.View_GetProperty(cbCustomMediaList.SelectedItem.ToString)
-            If Not String.IsNullOrEmpty(SQL.Name) AndAlso Not String.IsNullOrEmpty(SQL.Statement) Then
-                txtCustomMediaListName.Enabled = True
-                txtCustomMediaListQuery.Enabled = True
-                Dim SQLPrefixName As Match = Regex.Match(SQL.Name, "(?<PREFIX>movie-|movieset-|tvshow-|seasons-|episode-)(?<NAME>.*)", RegexOptions.Singleline)
-                Dim SQLQuery As Match = Regex.Match(SQL.Statement, "(?<QUERY>SELECT.*)", RegexOptions.Singleline)
-                txtCustomMediaListPrefix.Text = SQLPrefixName.Groups(1).Value.ToString
-                txtCustomMediaListName.Text = SQLPrefixName.Groups(2).Value.ToString
-                txtCustomMediaListQuery.Text = SQLQuery.Groups(1).Value.ToString.Trim
-            Else
+            Try
+                cbCustomMediaListType.SelectedIndex = -1
+                btnCustomMediaListRemove.Enabled = True
+                txtCustomMediaListName.Text = String.Empty
+                txtCustomMediaListQuery.Text = String.Empty
+                Dim SQL As Database.SQLViewProperty = Master.DB.View_GetProperty(cbCustomMediaList.SelectedItem.ToString)
+                If Not String.IsNullOrEmpty(SQL.Name) AndAlso Not String.IsNullOrEmpty(SQL.Statement) Then
+                    txtCustomMediaListName.Enabled = True
+                    txtCustomMediaListQuery.Enabled = True
+                    Dim SQLPrefixName As Match = Regex.Match(SQL.Name, "(?<PREFIX>movie-|movieset-|tvshow-|seasons-|episode-)(?<NAME>.*)", RegexOptions.Singleline)
+                    Dim SQLQuery As Match = Regex.Match(SQL.Statement, "(?<QUERY>SELECT.*)", RegexOptions.Singleline)
+                    txtCustomMediaListPrefix.Text = SQLPrefixName.Groups(1).Value.ToString
+                    txtCustomMediaListName.Text = SQLPrefixName.Groups(2).Value.ToString
+                    txtCustomMediaListQuery.Text = SQLQuery.Groups(1).Value.ToString.Trim
+                Else
+                    txtCustomMediaListName.Enabled = False
+                    txtCustomMediaListQuery.Enabled = False
+                End If
+            Catch ex As Exception
+                ' Handle errors when loading view properties (e.g., invalid views)
                 txtCustomMediaListName.Enabled = False
                 txtCustomMediaListQuery.Enabled = False
-            End If
+                txtCustomMediaListName.Text = String.Empty
+                txtCustomMediaListQuery.Text = String.Empty
+            End Try
         End If
     End Sub
 
     Private Sub btnCustomMediaListAdd_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnCustomMediaListAdd.Click
         If Not String.IsNullOrEmpty(txtCustomMediaListName.Text) OrElse String.IsNullOrEmpty(txtCustomMediaListQuery.Text) Then
             Master.DB.View_Delete(String.Concat(txtCustomMediaListPrefix.Text, txtCustomMediaListName.Text))
-            If Master.DB.View_Add(String.Concat("CREATE VIEW '", txtCustomMediaListPrefix.Text, txtCustomMediaListName.Text, "' AS ", txtCustomMediaListQuery.Text)) Then
+            If Master.DB.View_Add(String.Concat("CREATE VIEW """, txtCustomMediaListPrefix.Text, txtCustomMediaListName.Text, """ AS ", txtCustomMediaListQuery.Text)) Then
                 MessageBox.Show("Added View sucessfully", "", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 GetViews()
             Else

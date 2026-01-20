@@ -1,4 +1,4 @@
-﻿' ################################################################################
+' ################################################################################
 ' #                             EMBER MEDIA MANAGER                              #
 ' ################################################################################
 ' ################################################################################
@@ -70,7 +70,18 @@ Public Class Scraper
         If Not String.IsNullOrEmpty(strSubPagePath) Then
             Dim strSubPageUrl As String = String.Concat(strBaseUrl, strSubPagePath)
             Dim webParsing As New HtmlWeb
-            Dim htmldocSubPage As HtmlDocument = webParsing.Load(strSubPageUrl)
+            ' Set timeout to 30 seconds
+            webParsing.Timeout = 30000
+            Dim htmldocSubPage As HtmlDocument = Nothing
+            Try
+                htmldocSubPage = webParsing.Load(strSubPageUrl)
+            Catch ex As System.Net.WebException
+                _Logger.Warn(ex, String.Format("[Davestrailerpage] [GetTrailers] [Error] Failed to load URL: {0}", strSubPageUrl))
+                Return nTrailerlist
+            Catch ex As Exception
+                _Logger.Warn(ex, String.Format("[Davestrailerpage] [GetTrailers] [Error] Unexpected error loading URL: {0}", strSubPageUrl))
+                Return nTrailerlist
+            End Try
             If htmldocSubPage IsNot Nothing Then
                 'target is to get the <tr> node of a movie entry:
                 '

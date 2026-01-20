@@ -67,8 +67,9 @@ Namespace YouTube
             Select Case codec
                 Case AudioFormat.Aac
                     Return Enums.AudioCodec.AAC
-                Case AudioFormat.Mp3
-                    Return Enums.AudioCodec.MP3
+                ' AudioFormat.Mp3 wurde in der verwendeten VideoLibrary-Version entfernt.
+                ' Ältere Builds hatten hier eine explizite Behandlung für MP3,
+                ' die aktuelle API liefert jedoch keine MP3-Streams mehr.
                 Case AudioFormat.Opus
                     Return Enums.AudioCodec.Opus
                 Case AudioFormat.Vorbis

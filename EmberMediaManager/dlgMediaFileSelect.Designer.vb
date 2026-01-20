@@ -43,12 +43,6 @@ Partial Class dlgMediaFileSelect
         Me.pnlMain = New System.Windows.Forms.Panel()
         Me.tblMain = New System.Windows.Forms.TableLayoutPanel()
         Me.dgvMediaFiles = New System.Windows.Forms.DataGridView()
-        Me.btnOpenInBrowser = New System.Windows.Forms.Button()
-        Me.pblBottom = New System.Windows.Forms.Panel()
-        Me.tblBottom = New System.Windows.Forms.TableLayoutPanel()
-        Me.StatusStrip = New System.Windows.Forms.StatusStrip()
-        Me.pbStatus = New System.Windows.Forms.ToolStripProgressBar()
-        Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.colMediaFileTitel = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colMediaFileUrlWebsite = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colMediaFileLanguage = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -57,6 +51,12 @@ Partial Class dlgMediaFileSelect
         Me.colMediaFileVideoType = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colMediaFileSource = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.colMediaFileAddon = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.btnOpenInBrowser = New System.Windows.Forms.Button()
+        Me.pblBottom = New System.Windows.Forms.Panel()
+        Me.tblBottom = New System.Windows.Forms.TableLayoutPanel()
+        Me.StatusStrip = New System.Windows.Forms.StatusStrip()
+        Me.pbStatus = New System.Windows.Forms.ToolStripProgressBar()
+        Me.lblStatus = New System.Windows.Forms.ToolStripStatusLabel()
         Me.gbYouTubeSearch.SuspendLayout()
         Me.tblYouTubeSearch.SuspendLayout()
         Me.gbCustom.SuspendLayout()
@@ -296,66 +296,6 @@ Partial Class dlgMediaFileSelect
         Me.dgvMediaFiles.Size = New System.Drawing.Size(978, 354)
         Me.dgvMediaFiles.TabIndex = 10
         '
-        'btnOpenInBrowser
-        '
-        Me.btnOpenInBrowser.Enabled = False
-        Me.btnOpenInBrowser.Location = New System.Drawing.Point(3, 3)
-        Me.btnOpenInBrowser.Name = "btnOpenInBrowser"
-        Me.btnOpenInBrowser.Size = New System.Drawing.Size(120, 23)
-        Me.btnOpenInBrowser.TabIndex = 4
-        Me.btnOpenInBrowser.Text = "Open In Browser"
-        Me.btnOpenInBrowser.UseVisualStyleBackColor = True
-        '
-        'pblBottom
-        '
-        Me.pblBottom.AutoSize = True
-        Me.pblBottom.Controls.Add(Me.tblBottom)
-        Me.pblBottom.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me.pblBottom.Location = New System.Drawing.Point(0, 610)
-        Me.pblBottom.Name = "pblBottom"
-        Me.pblBottom.Size = New System.Drawing.Size(984, 29)
-        Me.pblBottom.TabIndex = 8
-        '
-        'tblBottom
-        '
-        Me.tblBottom.AutoSize = True
-        Me.tblBottom.ColumnCount = 4
-        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me.tblBottom.Controls.Add(Me.btnOpenInBrowser, 0, 0)
-        Me.tblBottom.Controls.Add(Me.btnOK, 2, 0)
-        Me.tblBottom.Controls.Add(Me.btnCancel, 3, 0)
-        Me.tblBottom.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tblBottom.Location = New System.Drawing.Point(0, 0)
-        Me.tblBottom.Name = "tblBottom"
-        Me.tblBottom.RowCount = 1
-        Me.tblBottom.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me.tblBottom.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29.0!))
-        Me.tblBottom.Size = New System.Drawing.Size(984, 29)
-        Me.tblBottom.TabIndex = 0
-        '
-        'StatusStrip
-        '
-        Me.StatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.pbStatus, Me.lblStatus})
-        Me.StatusStrip.Location = New System.Drawing.Point(0, 639)
-        Me.StatusStrip.Name = "StatusStrip"
-        Me.StatusStrip.Size = New System.Drawing.Size(984, 22)
-        Me.StatusStrip.TabIndex = 9
-        Me.StatusStrip.Text = "StatusStrip1"
-        '
-        'pbStatus
-        '
-        Me.pbStatus.Name = "pbStatus"
-        Me.pbStatus.Size = New System.Drawing.Size(100, 16)
-        '
-        'lblStatus
-        '
-        Me.lblStatus.Name = "lblStatus"
-        Me.lblStatus.Size = New System.Drawing.Size(90, 17)
-        Me.lblStatus.Text = "Compiling list..."
-        '
         'colMediaFileTitel
         '
         Me.colMediaFileTitel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
@@ -420,6 +360,66 @@ Partial Class dlgMediaFileSelect
         Me.colMediaFileAddon.Name = "colMediaFileAddon"
         Me.colMediaFileAddon.ReadOnly = True
         Me.colMediaFileAddon.Width = 67
+        '
+        'btnOpenInBrowser
+        '
+        Me.btnOpenInBrowser.Enabled = False
+        Me.btnOpenInBrowser.Location = New System.Drawing.Point(3, 3)
+        Me.btnOpenInBrowser.Name = "btnOpenInBrowser"
+        Me.btnOpenInBrowser.Size = New System.Drawing.Size(120, 23)
+        Me.btnOpenInBrowser.TabIndex = 4
+        Me.btnOpenInBrowser.Text = "Open In Browser"
+        Me.btnOpenInBrowser.UseVisualStyleBackColor = True
+        '
+        'pblBottom
+        '
+        Me.pblBottom.AutoSize = True
+        Me.pblBottom.Controls.Add(Me.tblBottom)
+        Me.pblBottom.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me.pblBottom.Location = New System.Drawing.Point(0, 610)
+        Me.pblBottom.Name = "pblBottom"
+        Me.pblBottom.Size = New System.Drawing.Size(984, 29)
+        Me.pblBottom.TabIndex = 8
+        '
+        'tblBottom
+        '
+        Me.tblBottom.AutoSize = True
+        Me.tblBottom.ColumnCount = 4
+        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me.tblBottom.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me.tblBottom.Controls.Add(Me.btnOpenInBrowser, 0, 0)
+        Me.tblBottom.Controls.Add(Me.btnOK, 2, 0)
+        Me.tblBottom.Controls.Add(Me.btnCancel, 3, 0)
+        Me.tblBottom.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tblBottom.Location = New System.Drawing.Point(0, 0)
+        Me.tblBottom.Name = "tblBottom"
+        Me.tblBottom.RowCount = 1
+        Me.tblBottom.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me.tblBottom.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29.0!))
+        Me.tblBottom.Size = New System.Drawing.Size(984, 29)
+        Me.tblBottom.TabIndex = 0
+        '
+        'StatusStrip
+        '
+        Me.StatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.pbStatus, Me.lblStatus})
+        Me.StatusStrip.Location = New System.Drawing.Point(0, 639)
+        Me.StatusStrip.Name = "StatusStrip"
+        Me.StatusStrip.Size = New System.Drawing.Size(984, 22)
+        Me.StatusStrip.TabIndex = 9
+        Me.StatusStrip.Text = "StatusStrip1"
+        '
+        'pbStatus
+        '
+        Me.pbStatus.Name = "pbStatus"
+        Me.pbStatus.Size = New System.Drawing.Size(100, 16)
+        '
+        'lblStatus
+        '
+        Me.lblStatus.Name = "lblStatus"
+        Me.lblStatus.Size = New System.Drawing.Size(90, 17)
+        Me.lblStatus.Text = "Compiling list..."
         '
         'dlgMediaFileSelect
         '

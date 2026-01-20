@@ -117,7 +117,7 @@ Public Class dlgSourceTVShow
         Else
             'check duplicate source names
             Using SQLcommand As SQLite.SQLiteCommand = Master.DB.MyVideosDBConn.CreateCommand()
-                SQLcommand.CommandText = String.Concat("SELECT idSource FROM tvshowsource WHERE strName LIKE """, txtSourceName.Text.Trim, """ AND idSource != ", _id, ";")
+                SQLcommand.CommandText = String.Concat("SELECT idSource FROM tvshowsource WHERE strName LIKE '", txtSourceName.Text.Trim, "' AND idSource != ", _id, ";")
                 Using SQLreader As SQLite.SQLiteDataReader = SQLcommand.ExecuteReader()
                     If SQLreader.HasRows Then
                         pbValidSourceName.Image = My.Resources.invalid

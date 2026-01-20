@@ -97,7 +97,7 @@ Public Class dlgNewSet
         If Not String.IsNullOrEmpty(txtTitle.Text) AndAlso Not String.IsNullOrEmpty(cbLanguage.Text) Then
             'check if the MovieSet Name is already existing
             Using SQLcommand As SQLite.SQLiteCommand = Master.DB.MyVideosDBConn.CreateCommand()
-                SQLcommand.CommandText = String.Concat("SELECT idSet FROM sets WHERE Title LIKE """, txtTitle.Text.Trim, """;")
+                SQLcommand.CommandText = String.Concat("SELECT idSet FROM sets WHERE Title LIKE '", txtTitle.Text.Trim, "';")
                 Using SQLreader As SQLite.SQLiteDataReader = SQLcommand.ExecuteReader()
                     If SQLreader.HasRows Then
                         btnOK.Enabled = False

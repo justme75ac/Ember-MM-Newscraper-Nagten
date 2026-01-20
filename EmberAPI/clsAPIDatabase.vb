@@ -1,4 +1,4 @@
-﻿' ################################################################################
+' ################################################################################
 ' #                             EMBER MEDIA MANAGER                              #
 ' ################################################################################
 ' ################################################################################
@@ -1154,7 +1154,14 @@ Public Class Database
             _myvideosDBConn.Open()
         Catch ex As Exception
             logger.Error(ex, New StackFrame().GetMethod().Name & Convert.ToChar(System.Windows.Forms.Keys.Tab) & "Unable to open media database connection.")
+            ' Verbindung konnte nicht aufgebaut werden – ohne offene Verbindung ist keine weitere Verarbeitung möglich
+            _myvideosDBConn = Nothing
         End Try
+
+        ' Wenn keine gültige Verbindung existiert, abbrechen und Fehlerzustand melden
+        If _myvideosDBConn Is Nothing OrElse _myvideosDBConn.State <> ConnectionState.Open Then
+            Return False
+        End If
 
         Try
             If isNew Then
@@ -1173,6 +1180,19 @@ Public Class Database
             Close_MyVideos()
             File.Delete(MyVideosDBFile)
         End Try
+
+        ' Validate and cleanup invalid views (only for existing databases)
+        If Not isNew Then
+            Try
+                Dim invalidViews As List(Of String) = View_ValidateAndCleanup(True)
+                If invalidViews.Count > 0 Then
+                    logger.Info(String.Format("Validated database views: {0} invalid view(s) removed", invalidViews.Count))
+                End If
+            Catch ex As Exception
+                logger.Warn(ex, New StackFrame().GetMethod().Name & " - Error during view validation")
+            End Try
+        End If
+
         Return isNew
     End Function
 
@@ -1607,8 +1627,19 @@ Public Class Database
     ''' <param name="command">SQL Command to process</param>
     Public Sub FillDataTable(ByRef table As DataTable, ByVal command As String)
         table.Clear()
-        Dim sqlDA As New SQLiteDataAdapter(command, _myvideosDBConn)
-        sqlDA.Fill(table)
+
+        ' Sicherstellen, dass eine gültige, geöffnete Verbindung existiert
+        If _myvideosDBConn Is Nothing OrElse _myvideosDBConn.State <> ConnectionState.Open Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot fill DataTable.")
+            Return
+        End If
+
+        Try
+            Dim sqlDA As New SQLiteDataAdapter(command, _myvideosDBConn)
+            sqlDA.Fill(table)
+        Catch ex As Exception
+            logger.Error(ex, New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Error filling DataTable with command: " & command)
+        End Try
     End Sub
 
     Public Sub FillDataTable_Movie(ByRef table As DataTable, ByVal command As String)
@@ -1672,6 +1703,10 @@ Public Class Database
 
     Public Function GetAll_Certifications() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT Certification FROM movie WHERE Certification <> '';"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -1697,6 +1732,10 @@ Public Class Database
 
     Public Function GetAll_Countries() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT strCountry FROM country ORDER BY strCountry;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -1710,6 +1749,10 @@ Public Class Database
 
     Public Function GetAll_Editions_Movie() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT DISTINCT edition FROM movie WHERE edition <> '' ORDER BY edition;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -1813,6 +1856,10 @@ Public Class Database
 
     Public Function GetAll_Status() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT DISTINCT Status FROM tvshow WHERE Status <> '' ORDER BY Status;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -1826,6 +1873,10 @@ Public Class Database
 
     Public Function GetAll_Studios() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT strStudio FROM studio ORDER BY strStudio;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -1853,6 +1904,10 @@ Public Class Database
 
     Public Function GetAll_Tags() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT strTag FROM tag ORDER BY strTag;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -1866,6 +1921,10 @@ Public Class Database
 
     Public Function GetAll_VideoSources_Movie() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT DISTINCT VideoSource FROM movie WHERE VideoSource <> '' ORDER BY VideoSource;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -1879,6 +1938,10 @@ Public Class Database
 
     Public Function GetAll_VideoSources_TVEpisode() As String()
         Dim nList As New List(Of String)
+        If _myvideosDBConn Is Nothing Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve certifications.")
+            Return nList.ToArray
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT DISTINCT VideoSource FROM episode WHERE VideoSource <> '' ORDER BY VideoSource;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -2057,7 +2120,10 @@ Public Class Database
 
     Public Sub LoadAll_Genres()
         Dim nList As New List(Of String)
-
+        If _myvideosDBConn Is Nothing OrElse _myvideosDBConn.State <> ConnectionState.Open Then
+            logger.Warn(New StackFrame().GetMethod().Name & Convert.ToChar(Windows.Forms.Keys.Tab) & "Database connection is not initialized. Cannot retrieve genres.")
+            Exit Sub
+        End If
         Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
             SQLcommand.CommandText = "SELECT strGenre FROM genre ORDER BY strGenre;"
             Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
@@ -5027,7 +5093,7 @@ Public Class Database
                         'secondly check if a movieset with the same name is already existing
                         Using sqlCommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
                             sqlCommand.CommandText = String.Concat("SELECT idSet, Plot ",
-                                                                       "FROM sets WHERE Title LIKE """, entry.Title, """;")
+                                                                       "FROM sets WHERE Title LIKE '", entry.Title, "';")
                             Using sqlReader As SQLiteDataReader = sqlCommand.ExecuteReader()
                                 If sqlReader.HasRows Then
                                     sqlReader.Read()
@@ -5110,7 +5176,7 @@ Public Class Database
                         End Using
 
                         Using sqlCommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
-                            sqlCommand.CommandText = String.Concat("SELECT idSet, Title FROM sets WHERE Title Like """, entry.Title, """;")
+                            sqlCommand.CommandText = String.Concat("SELECT idSet, Title FROM sets WHERE Title Like '", entry.Title, "';")
                             Using rdrSets As SQLiteDataReader = sqlCommand.ExecuteReader()
                                 If rdrSets.Read Then
                                     entry.ID = Convert.ToInt64(rdrSets(0))
@@ -5241,14 +5307,29 @@ Public Class Database
         End Select
 
         If Not String.IsNullOrEmpty(ContentType) OrElse type = Enums.ContentType.None Then
-            Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
-                SQLcommand.CommandText = String.Format("SELECT name FROM sqlite_master WHERE type ='view' AND name LIKE '{0}%';", ContentType)
-                Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
-                    While SQLreader.Read
-                        ViewList.Add(SQLreader("name").ToString)
-                    End While
+            Try
+                Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
+                    SQLcommand.CommandText = String.Format("SELECT name FROM sqlite_master WHERE type ='view' AND name LIKE '{0}%';", ContentType)
+                    Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
+                        While SQLreader.Read
+                            Dim viewName As String = SQLreader("name").ToString
+                            ' Validate that the view can be queried before adding it to the list
+                            Try
+                                Using testCommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
+                                    testCommand.CommandText = String.Format("SELECT COUNT(*) FROM ""{0}"" LIMIT 1", viewName)
+                                    testCommand.ExecuteScalar()
+                                End Using
+                                ViewList.Add(viewName)
+                            Catch
+                                ' Skip invalid views
+                                logger.Warn(String.Format("Skipping invalid view: {0}", viewName))
+                            End Try
+                        End While
+                    End Using
                 End Using
-            End Using
+            Catch ex As Exception
+                logger.Error(ex, New StackFrame().GetMethod().Name)
+            End Try
 
             'remove default lists
             If ViewList.Contains("episodelist") Then ViewList.Remove("episodelist")
@@ -5267,13 +5348,13 @@ Public Class Database
             Try
                 If Not episodesByView Then
                     Using SQLCommand As SQLiteCommand = Master.DB.MyVideosDBConn.CreateCommand()
-                        SQLCommand.CommandText = String.Format("SELECT COUNT(*) FROM '{0}'", viewName)
+                        SQLCommand.CommandText = String.Format("SELECT COUNT(*) FROM ""{0}""", viewName)
                         mCount = Convert.ToInt32(SQLCommand.ExecuteScalar)
                         Return mCount
                     End Using
                 Else
                     Using SQLCommand As SQLiteCommand = Master.DB.MyVideosDBConn.CreateCommand()
-                        SQLCommand.CommandText = String.Format("SELECT COUNT(*) FROM '{0}' INNER JOIN episode ON ('{0}'.idShow = episode.idShow) WHERE NOT episode.idFile = -1", viewName)
+                        SQLCommand.CommandText = String.Format("SELECT COUNT(*) FROM ""{0}"" INNER JOIN episode ON (""{0}"".idShow = episode.idShow) WHERE NOT episode.idFile = -1", viewName)
                         mCount = Convert.ToInt32(SQLCommand.ExecuteScalar)
                         Return mCount
                     End Using
@@ -5285,6 +5366,65 @@ Public Class Database
         Else
             Return mCount
         End If
+    End Function
+
+    ''' <summary>
+    ''' Validates all views in the database and removes invalid ones
+    ''' </summary>
+    ''' <param name="autoRemove">If True, automatically removes invalid views. If False, only logs them.</param>
+    ''' <returns>List of removed or invalid view names</returns>
+    ''' <remarks></remarks>
+    Public Function View_ValidateAndCleanup(Optional ByVal autoRemove As Boolean = True) As List(Of String)
+        Dim invalidViews As New List(Of String)
+        Dim allViews As New List(Of String)
+
+        Try
+            ' Get all views from the database
+            Using SQLcommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
+                SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type ='view';"
+                Using SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
+                    While SQLreader.Read
+                        allViews.Add(SQLreader("name").ToString)
+                    End While
+                End Using
+            End Using
+
+            ' Validate each view
+            For Each viewName As String In allViews
+                Dim isValid As Boolean = False
+                Try
+                    ' Try to query the view with a simple COUNT query
+                    Using testCommand As SQLiteCommand = _myvideosDBConn.CreateCommand()
+                        testCommand.CommandText = String.Format("SELECT COUNT(*) FROM ""{0}"" LIMIT 1", viewName)
+                        testCommand.ExecuteScalar()
+                        isValid = True
+                    End Using
+                Catch ex As Exception
+                    ' View is invalid
+                    isValid = False
+                    logger.Warn(String.Format("Invalid view detected: {0} - {1}", viewName, ex.Message))
+                    invalidViews.Add(viewName)
+                End Try
+
+                ' Remove invalid views if autoRemove is enabled
+                If Not isValid AndAlso autoRemove Then
+                    Try
+                        If View_Delete(viewName) Then
+                            logger.Info(String.Format("Removed invalid view: {0}", viewName))
+                        Else
+                            logger.Warn(String.Format("Failed to remove invalid view: {0}", viewName))
+                        End If
+                    Catch ex As Exception
+                        logger.Error(ex, String.Format("Error removing invalid view: {0}", viewName))
+                    End Try
+                End If
+            Next
+
+        Catch ex As Exception
+            logger.Error(ex, New StackFrame().GetMethod().Name)
+        End Try
+
+        Return invalidViews
     End Function
 
 #End Region 'Methods

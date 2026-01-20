@@ -1,4 +1,4 @@
-﻿' ################################################################################
+' ################################################################################
 ' #                             EMBER MEDIA MANAGER                              #
 ' ################################################################################
 ' ################################################################################
@@ -371,6 +371,12 @@ Public Class MediaFiles
                 RaiseEvent ProgressUpdated(-1, Master.eLang.GetString(1335, "Downloading Dash Video..."))
                 strVideoFilePath = WebPage.DownloadFile(mediaFile.UrlVideoStream, Path.Combine(tmpPath, "videostream"), True, "trailer")
                 RaiseEvent ProgressUpdated(-2, Master.eLang.GetString(1336, "Merging Trailer..."))
+                Dim ffmpegPath As String = Functions.GetFFMpeg
+                If String.IsNullOrEmpty(ffmpegPath) OrElse Not File.Exists(ffmpegPath) Then
+                    _Logger.Warn(String.Format("[MediaFiles] [LoadFromWeb] [Error] FFmpeg not found at: {0}. Cannot merge adaptive trailer streams.", If(String.IsNullOrEmpty(ffmpegPath), "Not configured", ffmpegPath)))
+                    RaiseEvent ProgressUpdated(-1, Master.eLang.GetString(1337, "FFmpeg not found. Cannot merge trailer."))
+                    Return
+                End If
                 Using ffmpeg As New Process()
                     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
                     '                                                ffmpeg info                                                     '
@@ -381,16 +387,23 @@ Public Class MediaFiles
                     ' -q:v n  = constant qualitiy(:video) (but a variable bitrate), "n" 1 (excellent quality) and 31 (worst quality) '
                     ' -b:v n  = bitrate(:video)                                                                                      '
                     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-                    ffmpeg.StartInfo.FileName = Functions.GetFFMpeg
+                    ffmpeg.StartInfo.FileName = ffmpegPath
                     ffmpeg.EnableRaisingEvents = False
                     ffmpeg.StartInfo.UseShellExecute = False
                     ffmpeg.StartInfo.CreateNoWindow = True
                     ffmpeg.StartInfo.RedirectStandardOutput = True
                     'ffmpeg.StartInfo.RedirectStandardError = True     <----- if activated, ffmpeg can not finish the building process 
                     ffmpeg.StartInfo.Arguments = String.Format(" -i ""{0}"" -i ""{1}"" -vcodec copy -acodec copy ""{2}""", strVideoFilePath, strAudioFilePath, strFileName)
-                    ffmpeg.Start()
-                    ffmpeg.WaitForExit()
-                    ffmpeg.Close()
+                    Try
+                        ffmpeg.Start()
+                        ffmpeg.WaitForExit()
+                    Catch ex As Exception
+                        _Logger.Error(ex, String.Format("[MediaFiles] [LoadFromWeb] [Error] Failed to execute FFmpeg: {0}", ffmpegPath))
+                        RaiseEvent ProgressUpdated(-1, Master.eLang.GetString(1338, "Error executing FFmpeg."))
+                        Return
+                    Finally
+                        ffmpeg.Close()
+                    End Try
                 End Using
 
                 If Not String.IsNullOrEmpty(strFileName) AndAlso File.Exists(strFileName) Then
